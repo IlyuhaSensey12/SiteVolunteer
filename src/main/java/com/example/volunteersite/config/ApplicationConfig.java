@@ -1,7 +1,9 @@
 package com.example.volunteersite.config;
 
+import com.example.volunteersite.repositories.OrganizationRepository;
 import com.example.volunteersite.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,14 +18,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-
     private final UserRepository repository;
+    private final OrganizationRepository organizationRepository;
+
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> {
+            if(repository.findByEmail(username).isPresent()) {
+                return repository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            } else {
+                return organizationRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("Organization not found"));
+            }
+        };
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
