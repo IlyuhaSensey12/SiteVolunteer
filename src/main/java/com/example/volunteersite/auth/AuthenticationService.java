@@ -40,7 +40,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .city(request.getCity())
-                .role(Role.ADMIN)
+                .role(Role.USER)
                 .build();
         if(organizationRepository.findByEmail(request.getEmail()).equals(request.getEmail())){
             throw new Exception("We have same user's and organization's email");
@@ -70,7 +70,6 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
-
     }
 
     public AuthenticationResponse registerOrg(RegisterOrgRequest request) throws Exception {

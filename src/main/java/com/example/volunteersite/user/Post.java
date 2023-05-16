@@ -23,7 +23,10 @@ public class Post {
 
     private int ratingOfVolunteer;
 
-    @OneToMany
+    @ManyToMany
+    @JoinTable(name = "posts_users",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users;
 
     @ManyToOne

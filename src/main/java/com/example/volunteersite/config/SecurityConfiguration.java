@@ -37,13 +37,14 @@ public class SecurityConfiguration {
                         "/api/v1/findOrgById/{id}",
                         "/api/v1/showAllUsers",
                         "/api/v1/addImage/{id}",
-                        "/api/v1/getUser")
+                        "/api/v1/getUser",
+                        "api/v1/getOrganization",
+                        "api/v1/findPostBy/{id}")
                 .permitAll()
                 .requestMatchers("/saveCategory",
                         "/updateOrg",
-                        "/deleteOrg/{id}")
-                .hasAnyAuthority(String.valueOf(Role.ADMIN), String.valueOf(Role.ORGANIZATION))
-                .requestMatchers("/addPost",
+                        "/deleteOrg/{id}",
+                        "/addPost",
                         "/updatePost",
                         "/deletePost/{id}")
                 .hasAnyAuthority(String.valueOf(Role.ORGANIZATION), String.valueOf(Role.ADMIN))

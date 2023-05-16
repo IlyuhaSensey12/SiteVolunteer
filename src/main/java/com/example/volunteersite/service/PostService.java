@@ -1,6 +1,7 @@
 package com.example.volunteersite.service;
 
 import com.example.volunteersite.dto.PostDto;
+import com.example.volunteersite.exeption.UserRatingException;
 import com.example.volunteersite.repositories.PostRepository;
 import com.example.volunteersite.repositories.UserRepository;
 import com.example.volunteersite.user.Post;
@@ -18,16 +19,20 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public void addUserOnPost(long id, String name, String lastname) throws Exception {
-        Post post = postRepository.findById(id);
-        User user = userRepository.findByFirstnameAndLastname(name, lastname);
-        if(user.getRating() < post.getRatingOfVolunteer()){
-            throw new Exception("User's rating isn't suitable");
-        }else {
-            user.setRating(user.getRating() + 5);
+    public void addUserOnPost(Long id, User user) throws UserRatingException {
+        Post post = postRepository.findPostById(id);
+        int requiredRating = post.getRatingOfVolunteer();
+        int userRating = user.getRating();
+        if (userRating < requiredRating) {
+            throw new UserRatingException("User's rating is not sufficient for this post");
+        } else {
+            int newRating = userRating + 10;
+            user.setRating(newRating);
             post.getUsers().add(user);
+            postRepository.save(post);
         }
     }
 
